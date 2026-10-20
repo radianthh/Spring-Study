@@ -9,7 +9,6 @@ import springprac.springbootdeveloper.dto.UpdateArticleRequest;
 import springprac.springbootdeveloper.repository.BlogRepository;
 
 import java.util.List;
-import java.util.Optional;
 
 @RequiredArgsConstructor
 @Service
