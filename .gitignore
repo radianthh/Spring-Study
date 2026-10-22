@@ -42,3 +42,5 @@ out/
 ### 로그 ###
 logs/
 *.log
+
+.env
