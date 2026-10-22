@@ -5,10 +5,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import springprac.springbootdeveloper.domain.Article;
-import springprac.springbootdeveloper.dto.AddArticleRequest;
-import springprac.springbootdeveloper.dto.ArticleResponse;
-import springprac.springbootdeveloper.dto.UpdateArticleRequest;
+import springprac.springbootdeveloper.dto.*;
 import springprac.springbootdeveloper.service.BlogService;
+import springprac.springbootdeveloper.service.WritingAssistantService;
 
 import java.util.List;
 
@@ -17,11 +16,11 @@ import java.util.List;
 public class BlogApiController {
 
     private final BlogService blogService;
+    private final WritingAssistantService writingAssistantService;
 
     @PostMapping("/api/articles")
     public ResponseEntity<Article> addArticle(@RequestBody AddArticleRequest request) {
         Article savedArticle = blogService.save(request);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(savedArticle);
     }
 
@@ -31,7 +30,6 @@ public class BlogApiController {
                 .stream()
                 .map(ArticleResponse::new)
                 .toList();
-
         return ResponseEntity.ok().body(savedArticles);
 
     }
@@ -39,7 +37,6 @@ public class BlogApiController {
     @GetMapping("/api/articles/{id}")
     public ResponseEntity<ArticleResponse> findArticle(@PathVariable Long id) {
         Article article = blogService.findById(id);
-
         return ResponseEntity.ok().body(new ArticleResponse(article));
     }
 
@@ -54,5 +51,11 @@ public class BlogApiController {
         Article updatedArticle = blogService.update(id, request);
         return ResponseEntity.ok().body(updatedArticle);
 
+    }
+
+    @PostMapping("/api/ai-suggestions")
+    public ResponseEntity<WritingSuggestionResponse> writingAssist(@RequestBody WritingSuggestionRequest request) {
+        WritingSuggestionResponse response = writingAssistantService.getWritingAssist(request);
+        return ResponseEntity.ok().body(response);
     }
 }
