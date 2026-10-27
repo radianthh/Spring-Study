@@ -19,3 +19,7 @@ spring:
 
   config:
     import: optional:file:.env[.properties]
+
+jwt:
+  issuer: black5824@naver.com
+  secret_key: ${JWT_SECRET_KEY}
