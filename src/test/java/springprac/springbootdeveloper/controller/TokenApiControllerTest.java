@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -22,6 +24,8 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.Map;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -87,4 +91,35 @@ class TokenApiControllerTest {
                 .andExpect(jsonPath("$.accessToken").isNotEmpty());
     }
 
+    @DisplayName("deleteRefreshToken: 리프레시 토큰을 삭제한다.")
+    @Test
+    public void deleteRefreshToken() throws Exception {
+        // given
+        final String url = "/api/refresh-token";
+
+        User testUser = userRepository.save(User.builder()
+                .email("user@gmail.com")
+                .password("test")
+                .build());
+
+        String refreshToken = JwtFactory.builder()
+                .claims(Map.of("id", testUser.getId()))
+                .build()
+                .createToken(jwtProperties);
+
+        refreshTokenRepository.save(new RefreshToken(testUser.getId(), refreshToken));
+
+        SecurityContextHolder.getContext()
+                .setAuthentication(new UsernamePasswordAuthenticationToken(testUser, refreshToken, testUser.getAuthorities()));
+
+        // when
+        ResultActions resultActions = this.mockMvc.perform(delete(url)
+                .contentType(MediaType.APPLICATION_JSON_VALUE));
+
+        // then
+        resultActions
+                .andExpect(status().isOk());
+
+        assertThat(refreshTokenRepository.findByRefreshToken(refreshToken)).isEmpty();
+    }
 }

@@ -37,8 +37,12 @@ public class Article {
     @Column(name = "image_url")
     private String imageUrl;
 
+    @Column(name = "author", nullable = false)
+    private String author;
+
     @Builder
-    public Article(String title, String content, String imageUrl) {
+    public Article(String author, String title, String content, String imageUrl) {
+        this.author = author;
         this.title = title;
         this.content = content;
         this.imageUrl = imageUrl;
