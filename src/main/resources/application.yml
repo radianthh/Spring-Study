@@ -6,9 +6,6 @@ spring:
         format_sql: true
     defer-datasource-initialization: true
 
-  datasource:
-    url: jdbc:h2:mem:testdb
-    username: sa
   h2:
     console:
       enabled: true
@@ -34,3 +31,9 @@ spring:
 jwt:
   issuer: black5824@naver.com
   secret_key: ${JWT_SECRET_KEY}
+
+cloud:
+  aws:
+    region: ap-northeast-2
+    s3:
+      bucket: springboot-developer-hohyeon

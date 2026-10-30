@@ -1,6 +1,8 @@
 package springprac.springbootdeveloper.service;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
+import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import springprac.springbootdeveloper.dto.UploadResponse;
 
@@ -10,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.UUID;
 
+@Profile("local")
 @Service
 public class LocalFileStorageService implements FileStorageService {
 
